@@ -1,0 +1,48 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "metro": [
+    {
+      "id": "1398156b-f04d-4bd4-9369-2120ba901a9e",
+      "nombre": "Ruta8",
+      "sector": "San_Antonio",
+      "salida": "UNASUR",
+      "llegada": "EPN",
+      "maquinista": "Hector",
+      "detalles": "Recorrido"
+    },
+    {
+      "id": "778c7e8f-9b6e-4e80-9ba2-5e6042a570ec",
+      "nombre": "Ruta10",
+      "sector": "Condado",
+      "salida": "condado",
+      "llegada": "Ofelia",
+      "maquinista": "Julio",
+      "detalles": "Bus"
+    },
+    {
+      "id": "779afdbf-7fb9-4c8e-9273-91e3ca0799be",
+      "nombre": "Ruta88",
+      "sector": "Sangolqui",
+      "salida": "Triangulo",
+      "llegada": "ESPE",
+      "maquinista": "Jhon",
+      "detalles": "Recorrido"
+    }
+  ]
+}
