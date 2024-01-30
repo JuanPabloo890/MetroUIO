@@ -1,8 +1,9 @@
 import { useState } from "react"
 import Mensajes from "./Mensajes"
 import { v4 as uuidv4 } from 'uuid';
+import { useEffect } from 'react'
 
-export const Formulario = ({setEstado}) => {
+export const Formulario = ({setEstado, idMetro, setIdmetro}) => {
 
     const [error, setError] = useState(false)
     const [mensaje, setMensaje] = useState(false)
@@ -16,6 +17,35 @@ export const Formulario = ({setEstado}) => {
         detalles:""
     })
 
+    useEffect(() => {
+        //Verificar de que exista la variable idMetro
+        if(idMetro)
+        {
+            //Crear una funcion autoejecutada para consultar el metro en base al ID
+            (async function (idMetro) {
+                //Uso del try-cath
+                try {
+                    //Definir la url para la ejecucion de 
+                    const respuesta = await (await fetch(`https://65b819a946324d531d55f1bd.mockapi.io/metro/${idMetro}`)).json()
+                    const {id,nombre,sector,salida,llegada,maquinista,detalles} = respuesta
+                    setform({
+                        ...form,
+                        nombre,
+                        sector,
+                        salida,
+                        llegada,
+                        maquinista,
+                        detalles,
+                        id
+                    })
+                }
+                catch (error) {
+                    console.log(error);
+                }
+            })(idMetro)
+        }
+    }, [idMetro])
+
     const handleChange = (e) => { 
         setform({
             ...form, //Copiar las propiedades del objeto inicial (spread operator)
@@ -23,36 +53,52 @@ export const Formulario = ({setEstado}) => {
         })
     }
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e) => 
+    {
         e.preventDefault()
-        //Validacion
-        if (Object.values(form).includes("") || Object.entries(form).length === 0)
-        {
-            setError(true)//Cambiar el valor a la variable error
-
+        if (Object.values(form).includes("") || Object.entries(form).length === 0) {
+            setError(true)
+            setIdmetro(0)
             setTimeout(() => {
-                setError(false)//Cambiar el valor de la variable despues de un segundo
+            setError(false)
             }, 1000);
             return
         }
         try {
-            const url ="https://65b819a946324d531d55f1bd.mockapi.io/metro"
-			form.id = uuidv4()
-            await fetch(url,{
-                method:'POST', //Especificar el tipo de accion
-                body:JSON.stringify(form), //Convertir la variable form a un JSON
-                headers:{'Content-Type':'application/json'} //Especificar el tipo de contenido
-            })
-            setMensaje(true)
-			setEstado(true)
-
-            setTimeout(() => {
-                setMensaje(false)
-				setEstado(false)
+            if(form.id){
+                const url = `https://65b819a946324d531d55f1bd.mockapi.io/metro/${form.id}`
+                await fetch(url,{
+                    method:'PUT',
+                    body:JSON.stringify(form),
+                    headers:{'Content-Type':'application/json'}
+                })
+                setEstado(true)
                 setform({})
-            }, 1000);
+								setTimeout(() => {
+	                    setEstado(false)
+                    setform({})
+                }, 1000)
+            }
+            else{
 
-        }catch (error) {
+                const url = "https://65b819a946324d531d55f1bd.mockapi.io/metro"
+								form.id = uuidv4()
+                await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(form),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                setMensaje(true)
+                setEstado(true)
+                setTimeout(() => {
+                    setMensaje(false)
+                    setEstado(false)
+                    setform({})
+                }, 1000);
+
+            }
+
+        } catch (error) {
             console.log(error);
         }
     }
@@ -153,11 +199,11 @@ export const Formulario = ({setEstado}) => {
             </div>
 
             <input
-                type="submit"
-                className='bg-sky-900 w-full p-3 
-        text-white uppercase font-bold rounded-lg 
-        hover:bg-red-900 cursor-pointer transition-all'
-                value='Registrar ruta' />
+            type="submit"
+            className='bg-sky-900 w-full p-3 
+            text-white uppercase font-bold rounded-lg 
+            hover:bg-red-900 cursor-pointer transition-all'
+            value={form.id ? "Actualizar ruta" : "Registrar ruta"} />
 
         </form>
     )
